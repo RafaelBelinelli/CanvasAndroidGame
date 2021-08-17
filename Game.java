@@ -1,18 +1,17 @@
 package br.unicamp.canvasandroidgame;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.DisplayMetrics;
-import android.view.ContextMenu;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+
+import br.unicamp.canvasandroidgame.object.Enemy;
+import br.unicamp.canvasandroidgame.object.Player;
 
 /**
  * Game manages all objects in the game and its responsible for updating all states and render all
@@ -22,12 +21,29 @@ import androidx.core.content.ContextCompat;
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private final Player player;
     private final Joystick joystick;
+    private final Enemy enemy;
     private Gameloop gameLoop;
+
+    public Game(Context context) {
+        super(context);
+
+        // Get surface holder and add callback
+        SurfaceHolder surfaceHolder = getHolder();
+        surfaceHolder.addCallback(this);
+
+        gameLoop = new Gameloop(this, surfaceHolder);
+
+        // Initialize game objects
+        joystick = new Joystick(275, 750, 40, 70);
+        player = new Player(getContext(), joystick, 2*500, 500, 30);
+        enemy = new Enemy(getContext(), player, 500, 200, 30);
+        setFocusable(true);
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        switch(event.getAction()) {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (joystick.isPressed((double) event.getX(), (double) event.getY())) {
                     joystick.setIsPressed(true);
@@ -45,21 +61,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         return super.onTouchEvent(event);
-    }
-
-    public Game(Context context) {
-        super(context);
-
-        // Get surface holder and add callback
-        SurfaceHolder surfaceHolder = getHolder();
-        surfaceHolder.addCallback(this);
-
-        gameLoop = new Gameloop(this, surfaceHolder);
-
-        // Initialize game objects
-        joystick = new Joystick(275, 750, 40, 70);
-        player = new Player(getContext(), 2*500, 500, 30);
-        setFocusable(true);
     }
 
     @Override
@@ -85,6 +86,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         joystick.draw(canvas);
         player.draw(canvas);
+        enemy.draw(canvas);
     }
 
     public void drawUPS(Canvas canvas) {
@@ -107,6 +109,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     public void update() {
         joystick.update();
-        player.update(joystick);
+        player.update();
+        enemy.update();
     }
 }
