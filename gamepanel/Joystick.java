@@ -1,10 +1,10 @@
-package br.unicamp.canvasandroidgame;
+package br.unicamp.canvasandroidgame.gamepanel;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import br.unicamp.canvasandroidgame.object.Utils;
+import br.unicamp.canvasandroidgame.Utils;
 
 public class Joystick {
     private final int outerCircleCenterPositionX;

@@ -1,4 +1,4 @@
-package br.unicamp.canvasandroidgame.object;
+package br.unicamp.canvasandroidgame.gameobject;
 
 import android.graphics.Canvas;
 
@@ -28,11 +28,11 @@ public abstract class GameObject {
     public abstract void draw(Canvas canvas);
     public abstract void update();
 
-    protected double getPositionX() {
+    public double getPositionX() {
         return positionX;
     }
 
-    protected double getPositionY() {
+    public double getPositionY() {
         return positionY;
     }
 

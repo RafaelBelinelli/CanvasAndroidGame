@@ -2,23 +2,23 @@ package br.unicamp.canvasandroidgame;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.text.SpanWatcher;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import br.unicamp.canvasandroidgame.object.Circle;
-import br.unicamp.canvasandroidgame.object.Enemy;
-import br.unicamp.canvasandroidgame.object.Player;
-import br.unicamp.canvasandroidgame.object.Spell;
+import br.unicamp.canvasandroidgame.gameobject.Circle;
+import br.unicamp.canvasandroidgame.gameobject.Enemy;
+import br.unicamp.canvasandroidgame.gameobject.Player;
+import br.unicamp.canvasandroidgame.gameobject.Spell;
+import br.unicamp.canvasandroidgame.gamepanel.GameOver;
+import br.unicamp.canvasandroidgame.gamepanel.Joystick;
+import br.unicamp.canvasandroidgame.gamepanel.Performance;
 
 /**
  * Game manages all objects in the game and its responsible for updating all states and render all
@@ -33,6 +33,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private List<Spell> spellList = new ArrayList<Spell>();
     private int joystickPointerId = 0;
     private int numberOfSpellsToCast = 0;
+    private GameOver gameOver;
+    private Performance performance;
 
     public Game(Context context) {
         super(context);
@@ -43,9 +45,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         gameLoop = new Gameloop(this, surfaceHolder);
 
-        // Initialize game objects
+        // Initialize game panels
+        performance = new Performance(gameLoop, context);
+        gameOver = new GameOver(context);
         joystick = new Joystick(275, 750, 70, 130);
-        player = new Player(getContext(), joystick, 2*500, 500, 30);
+
+        // Initialize game objects
+        player = new Player(context, joystick, 2*500, 500, 30);
+
+
         setFocusable(true);
     }
 
@@ -106,10 +114,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        drawFPS(canvas);
-        drawUPS(canvas);
 
-        joystick.draw(canvas);
         player.draw(canvas);
 
         for (Enemy enemy : enemyList) {
@@ -119,27 +124,24 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         for (Spell spell : spellList) {
             spell.draw(canvas);
         }
-    }
 
-    public void drawUPS(Canvas canvas) {
-        String averageUPS = Double.toString(gameLoop.getAverageUPS());
-        Paint paint = new Paint();
-        int color = ContextCompat.getColor(getContext(), R.color.Magenta);
-        paint.setColor(color);
-        paint.setTextSize(50);
-        canvas.drawText("UPS: " + Math.ceil(Double.parseDouble(averageUPS)), 100, 100, paint);
-    }
+        // Draw game panels
+        joystick.draw(canvas);
+        performance.draw(canvas);
 
-    public void drawFPS(Canvas canvas) {
-        String averageFPS = Double.toString(gameLoop.getAverageFPS());
-        Paint paint = new Paint();
-        int color = ContextCompat.getColor(getContext(), R.color.Magenta);
-        paint.setColor(color);
-        paint.setTextSize(50);
-        canvas.drawText("FPS: " + Math.ceil(Double.parseDouble(averageFPS)), 100, 200, paint);
+        // Draw game over if the player is dead
+        if (player.getHealthPoints() <= 0) {
+            gameOver.draw(canvas);
+        }
+
     }
 
     public void update() {
+        // Stop updating the game if the player is dead
+        if (player.getHealthPoints() <= 0) {
+            return;
+        }
+
         // Update game state
         joystick.update();
         player.update();
@@ -171,6 +173,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
             if (Circle.isColliding(enemy, player)) {
                 // Remove enemy if it collides with the player
                 iteratorEnemy.remove();
+                player.setHealthPoints(player.getHealthPoints() - 1);
                 continue;
             }
 

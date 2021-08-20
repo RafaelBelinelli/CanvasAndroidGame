@@ -1,4 +1,4 @@
-package br.unicamp.canvasandroidgame.object;
+package br.unicamp.canvasandroidgame;
 
 public class Utils {
 
