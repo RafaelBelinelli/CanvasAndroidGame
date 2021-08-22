@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 
 import androidx.core.content.ContextCompat;
 
+import br.unicamp.canvasandroidgame.Game;
+import br.unicamp.canvasandroidgame.GameDisplay;
 import br.unicamp.canvasandroidgame.Gameloop;
 import br.unicamp.canvasandroidgame.Utils;
 import br.unicamp.canvasandroidgame.gamepanel.HealthBar;
@@ -49,9 +51,9 @@ public class Player extends Circle {
         }
     }
 
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
-        healthBar.draw(canvas);
+    public void draw(Canvas canvas, GameDisplay gameDisplay) {
+        super.draw(canvas, gameDisplay);
+        healthBar.draw(canvas, gameDisplay);
     }
 
     public int getHealthPoints() {

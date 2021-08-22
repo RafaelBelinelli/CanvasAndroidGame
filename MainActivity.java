@@ -2,6 +2,7 @@ package br.unicamp.canvasandroidgame;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.Animator;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -10,6 +11,8 @@ import android.view.WindowManager;
  * Main activity is the entry point to our application
  */
 public class MainActivity extends AppCompatActivity {
+
+    private Game game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,38 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         // Set content view to game, so that objects in the Game class can be rendered to the screen
-        setContentView(new Game(this));
+        game = new Game(this);
+        setContentView(game);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        game.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
     }
 }

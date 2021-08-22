@@ -2,6 +2,8 @@ package br.unicamp.canvasandroidgame.gameobject;
 
 import android.graphics.Canvas;
 
+import br.unicamp.canvasandroidgame.GameDisplay;
+
 /**
  * GameObject is an abstract class which is the foundation of all world objects in the game.
  */
@@ -25,7 +27,7 @@ public abstract class GameObject {
         );
     }
 
-    public abstract void draw(Canvas canvas);
+    public abstract void draw(Canvas canvas, GameDisplay gameDisplay);
     public abstract void update();
 
     public double getPositionX() {

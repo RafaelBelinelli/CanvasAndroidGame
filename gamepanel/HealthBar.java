@@ -6,6 +6,7 @@ import android.graphics.Paint;
 
 import androidx.core.content.ContextCompat;
 
+import br.unicamp.canvasandroidgame.GameDisplay;
 import br.unicamp.canvasandroidgame.R;
 import br.unicamp.canvasandroidgame.gameobject.Player;
 
@@ -33,7 +34,7 @@ public class HealthBar {
         this.healthPaint.setColor(healthColor);
     }
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, GameDisplay gameDisplay) {
         float x = (float) player.getPositionX();
         float y = (float) player.getPositionY();
         float distanceToPlayer = 30;
@@ -45,7 +46,13 @@ public class HealthBar {
         borderRight = x + width/2;
         borderBottom = y - distanceToPlayer;
         borderTop = borderBottom - height;
-        canvas.drawRect(borderLeft, borderTop, borderRight, borderBottom, borderPaint);
+        canvas.drawRect(
+                (float) gameDisplay.gameToDisplayCoordinatesX(borderLeft),
+                (float) gameDisplay.gameToDisplayCoordinatesY(borderTop),
+                (float) gameDisplay.gameToDisplayCoordinatesX(borderRight),
+                (float) gameDisplay.gameToDisplayCoordinatesY(borderBottom),
+                borderPaint
+        );
 
         // Draw health
         float healthLeft, healthTop, healthRight, healthBottom, healthWidth, healthHeight;
@@ -56,6 +63,12 @@ public class HealthBar {
         healthBottom = borderBottom - margin;
         healthTop = healthBottom - healthHeight;
 
-        canvas.drawRect(healthLeft, healthTop, healthRight, healthBottom, healthPaint);
+        canvas.drawRect(
+                (float) gameDisplay.gameToDisplayCoordinatesX(healthLeft),
+                (float) gameDisplay.gameToDisplayCoordinatesY(healthTop),
+                (float) gameDisplay.gameToDisplayCoordinatesX(healthRight),
+                (float) gameDisplay.gameToDisplayCoordinatesY(healthBottom),
+                healthPaint
+        );
     }
 }
