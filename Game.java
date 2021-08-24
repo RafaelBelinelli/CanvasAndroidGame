@@ -22,6 +22,7 @@ import br.unicamp.canvasandroidgame.gameobject.Spell;
 import br.unicamp.canvasandroidgame.gamepanel.GameOver;
 import br.unicamp.canvasandroidgame.gamepanel.Joystick;
 import br.unicamp.canvasandroidgame.gamepanel.Performance;
+import br.unicamp.canvasandroidgame.graphics.SpriteSheet;
 
 /**
  * Game manages all objects in the game and its responsible for updating all states and render all
@@ -55,7 +56,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         joystick = new Joystick(275, 750, 70, 130);
 
         // Initialize game objects
-        player = new Player(context, joystick, 2*500, 500, 30);
+        SpriteSheet spriteSheet = new SpriteSheet(context);
+        player = new Player(context, joystick, 2*500, 500, 30, spriteSheet);
 
         // Initialize gameDisplay and center it around the player
         DisplayMetrics displayMetrics = new DisplayMetrics();

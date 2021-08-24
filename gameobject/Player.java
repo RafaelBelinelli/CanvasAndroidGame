@@ -5,13 +5,14 @@ import android.graphics.Canvas;
 
 import androidx.core.content.ContextCompat;
 
-import br.unicamp.canvasandroidgame.Game;
 import br.unicamp.canvasandroidgame.GameDisplay;
 import br.unicamp.canvasandroidgame.Gameloop;
 import br.unicamp.canvasandroidgame.Utils;
 import br.unicamp.canvasandroidgame.gamepanel.HealthBar;
 import br.unicamp.canvasandroidgame.gamepanel.Joystick;
 import br.unicamp.canvasandroidgame.R;
+import br.unicamp.canvasandroidgame.graphics.Sprite;
+import br.unicamp.canvasandroidgame.graphics.SpriteSheet;
 
 /**
  * Player is the main character of the game, which the user can control with a touch joystick.
@@ -25,12 +26,14 @@ public class Player extends Circle {
     private final Joystick joystick;
     private HealthBar healthBar;
     private int healthPoints;
+    private SpriteSheet spriteSheet;
 
-    public Player(Context context, Joystick joystick, double positionX, double positionY, double radius) {
+    public Player(Context context, Joystick joystick, double positionX, double positionY, double radius, SpriteSheet spriteSheet) {
         super(context, ContextCompat.getColor(context, R.color.player), positionX, positionY, radius);
         this.joystick = joystick;
         this.healthBar = new HealthBar(context, this);
         this.healthPoints = MAX_HEALTH_POINTS;
+        this.spriteSheet = spriteSheet;
     }
 
     public void update() {
@@ -52,7 +55,34 @@ public class Player extends Circle {
     }
 
     public void draw(Canvas canvas, GameDisplay gameDisplay) {
-        super.draw(canvas, gameDisplay);
+        Sprite sprite;
+
+        if (directionY < 0) {
+            sprite = spriteSheet.getPlayerSpriteUp();
+        } else {
+            sprite = spriteSheet.getPlayerSpriteDown();
+        }
+
+        sprite.draw(
+                canvas,
+                (int) gameDisplay.gameToDisplayCoordinatesX(getPositionX()) - sprite.getWidth() / 2,
+                (int) gameDisplay.gameToDisplayCoordinatesY(getPositionY()) - sprite.getHeight() / 2
+        );
+
+        /*if (directionY < 0) {
+            sprite.draw2(
+                    canvas,
+                    (int) gameDisplay.gameToDisplayCoordinatesX(getPositionX()) - sprite.getWidth() / 2,
+                    (int) gameDisplay.gameToDisplayCoordinatesY(getPositionY()) - sprite.getHeight() / 2);
+        } else {
+
+            sprite.draw(
+                    canvas,
+                    (int) gameDisplay.gameToDisplayCoordinatesX(getPositionX()) - sprite.getWidth() / 2,
+                    (int) gameDisplay.gameToDisplayCoordinatesY(getPositionY()) - sprite.getHeight() / 2
+            );
+        }*/
+
         healthBar.draw(canvas, gameDisplay);
     }
 
