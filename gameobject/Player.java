@@ -11,6 +11,7 @@ import br.unicamp.canvasandroidgame.Utils;
 import br.unicamp.canvasandroidgame.gamepanel.HealthBar;
 import br.unicamp.canvasandroidgame.gamepanel.Joystick;
 import br.unicamp.canvasandroidgame.R;
+import br.unicamp.canvasandroidgame.graphics.Animator;
 import br.unicamp.canvasandroidgame.graphics.Sprite;
 import br.unicamp.canvasandroidgame.graphics.SpriteSheet;
 
@@ -26,14 +27,18 @@ public class Player extends Circle {
     private final Joystick joystick;
     private HealthBar healthBar;
     private int healthPoints;
+    private Animator animator;
+    private PlayerState playerState;
     private SpriteSheet spriteSheet;
 
-    public Player(Context context, Joystick joystick, double positionX, double positionY, double radius, SpriteSheet spriteSheet) {
+    public Player(Context context, Joystick joystick, double positionX, double positionY, double radius, Animator animator) {
         super(context, ContextCompat.getColor(context, R.color.player), positionX, positionY, radius);
         this.joystick = joystick;
         this.healthBar = new HealthBar(context, this);
         this.healthPoints = MAX_HEALTH_POINTS;
-        this.spriteSheet = spriteSheet;
+        this.animator = animator;
+        this.playerState = new PlayerState(this);
+        this.spriteSheet = new SpriteSheet(context);
     }
 
     public void update() {
@@ -52,37 +57,42 @@ public class Player extends Circle {
             directionX = velocityX/distance;
             directionY = velocityY/distance;
         }
+
+        playerState.update();
     }
 
     public void draw(Canvas canvas, GameDisplay gameDisplay) {
-        Sprite sprite;
-
-        if (directionY < 0) {
-            sprite = spriteSheet.getPlayerSpriteUp();
-        } else {
-            sprite = spriteSheet.getPlayerSpriteDown();
+        if (directionY < 0) { // Up
+            if (directionX < 0) { // Left
+                if (directionX < directionY) {
+                    animator.setPlayerSpriteArray(spriteSheet.getPlayerSpriteArrayLeft());
+                } else {
+                    animator.setPlayerSpriteArray(spriteSheet.getPlayerSpriteArrayUp());
+                }
+            } else { // Right
+                if (directionX > -directionY) {
+                    animator.setPlayerSpriteArray(spriteSheet.getPlayerSpriteArrayRight());
+                } else {
+                    animator.setPlayerSpriteArray(spriteSheet.getPlayerSpriteArrayUp());
+                }
+            }
+        } else { // Down
+            if (directionX < 0) { // Left
+                if (directionX < -directionY) {
+                    animator.setPlayerSpriteArray(spriteSheet.getPlayerSpriteArrayLeft());
+                } else {
+                    animator.setPlayerSpriteArray(spriteSheet.getPlayerSpriteArrayDown());
+                }
+            } else { // Right
+                if (directionX > directionY) {
+                    animator.setPlayerSpriteArray(spriteSheet.getPlayerSpriteArrayRight());
+                } else {
+                    animator.setPlayerSpriteArray(spriteSheet.getPlayerSpriteArrayDown());
+                }
+            }
         }
 
-        sprite.draw(
-                canvas,
-                (int) gameDisplay.gameToDisplayCoordinatesX(getPositionX()) - sprite.getWidth() / 2,
-                (int) gameDisplay.gameToDisplayCoordinatesY(getPositionY()) - sprite.getHeight() / 2
-        );
-
-        /*if (directionY < 0) {
-            sprite.draw2(
-                    canvas,
-                    (int) gameDisplay.gameToDisplayCoordinatesX(getPositionX()) - sprite.getWidth() / 2,
-                    (int) gameDisplay.gameToDisplayCoordinatesY(getPositionY()) - sprite.getHeight() / 2);
-        } else {
-
-            sprite.draw(
-                    canvas,
-                    (int) gameDisplay.gameToDisplayCoordinatesX(getPositionX()) - sprite.getWidth() / 2,
-                    (int) gameDisplay.gameToDisplayCoordinatesY(getPositionY()) - sprite.getHeight() / 2
-            );
-        }*/
-
+        animator.draw(canvas, gameDisplay, this);
         healthBar.draw(canvas, gameDisplay);
     }
 
@@ -93,5 +103,9 @@ public class Player extends Circle {
     public void setHealthPoints(int healthPoints) {
         if (healthPoints >= 0)
             this.healthPoints = healthPoints;
+    }
+
+    public PlayerState getPlayerState() {
+        return playerState;
     }
 }

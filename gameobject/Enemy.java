@@ -14,7 +14,7 @@ import br.unicamp.canvasandroidgame.R;
 public class Enemy extends Circle {
     private static final double SPEED_PIXELS_PER_SECOND = Player.SPEED_PIXELS_PER_SECOND * 0.6;
     private static final double MAX_SPEED = SPEED_PIXELS_PER_SECOND / Gameloop.MAX_UPS;
-    private static final double SPAWNS_PER_MINUTE = 100;
+    private static final double SPAWNS_PER_MINUTE = 10;
     private static final double SPAWNS_PER_SECOND = SPAWNS_PER_MINUTE / 60.0;
     private static final double UPDATES_PER_SPAWN = Gameloop.MAX_UPS / SPAWNS_PER_SECOND;
     private static double updatesUntilNextSpawn = UPDATES_PER_SPAWN;

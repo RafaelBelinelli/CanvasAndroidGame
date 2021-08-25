@@ -1,8 +1,13 @@
 package br.unicamp.canvasandroidgame;
 
+import android.graphics.Rect;
+
 import br.unicamp.canvasandroidgame.gameobject.GameObject;
 
 public class GameDisplay {
+    public final Rect DISPLAY_RECT;
+    private final int heightPixels;
+    private final int widthPixels;
     private double gameToDisplayCoordinatesOffsetX;
     private double gameToDisplayCoordinatesOffsetY;
     private double displayCenterX;
@@ -11,11 +16,17 @@ public class GameDisplay {
     private double gameCenterY;
     private GameObject centerObject;
 
+
     public GameDisplay(int widthPixels, int heightPixels, GameObject centerObject) {
         this.centerObject = centerObject;
 
         displayCenterX = widthPixels/2.0;
         displayCenterY = heightPixels/2.0;
+
+        this.widthPixels = widthPixels;
+        this.heightPixels = heightPixels;
+
+        DISPLAY_RECT = new Rect(0, 0, widthPixels, heightPixels);
     }
 
     public void update() {
@@ -32,5 +43,14 @@ public class GameDisplay {
 
     public double gameToDisplayCoordinatesY(double y) {
         return y + gameToDisplayCoordinatesOffsetY;
+    }
+
+    public Rect getGameRect() {
+        return new Rect(
+                (int) (gameCenterX - widthPixels/2),
+                (int) (gameCenterY - heightPixels/2),
+                (int) (gameCenterX + widthPixels/2),
+                (int) (gameCenterY + heightPixels/2)
+        );
     }
 }

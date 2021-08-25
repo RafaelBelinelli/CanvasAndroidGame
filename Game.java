@@ -22,7 +22,9 @@ import br.unicamp.canvasandroidgame.gameobject.Spell;
 import br.unicamp.canvasandroidgame.gamepanel.GameOver;
 import br.unicamp.canvasandroidgame.gamepanel.Joystick;
 import br.unicamp.canvasandroidgame.gamepanel.Performance;
+import br.unicamp.canvasandroidgame.graphics.Animator;
 import br.unicamp.canvasandroidgame.graphics.SpriteSheet;
+import br.unicamp.canvasandroidgame.map.Tilemap;
 
 /**
  * Game manages all objects in the game and its responsible for updating all states and render all
@@ -32,6 +34,7 @@ import br.unicamp.canvasandroidgame.graphics.SpriteSheet;
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private final Player player;
     private final Joystick joystick;
+    private final Tilemap tilemap;
     private Gameloop gameLoop;
     private List<Enemy> enemyList = new ArrayList<Enemy>();
     private List<Spell> spellList = new ArrayList<Spell>();
@@ -57,12 +60,15 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         // Initialize game objects
         SpriteSheet spriteSheet = new SpriteSheet(context);
-        player = new Player(context, joystick, 2*500, 500, 30, spriteSheet);
+        Animator animator = new Animator(spriteSheet.getPlayerSpriteArrayDown());
+        player = new Player(context, joystick, 2*500, 500, 30, animator);
 
         // Initialize gameDisplay and center it around the player
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         gameDisplay = new GameDisplay(displayMetrics.widthPixels, displayMetrics.heightPixels, player);
+
+        tilemap = new Tilemap(spriteSheet);
 
         setFocusable(true);
     }
@@ -129,6 +135,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+
+        //Draw Tilemap
+        tilemap.draw(canvas, gameDisplay);
 
         player.draw(canvas, gameDisplay);
 
