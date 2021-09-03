@@ -12,7 +12,7 @@ import br.unicamp.canvasandroidgame.gamepanel.HealthBar;
 import br.unicamp.canvasandroidgame.gamepanel.Joystick;
 import br.unicamp.canvasandroidgame.R;
 import br.unicamp.canvasandroidgame.graphics.Animator;
-import br.unicamp.canvasandroidgame.graphics.Sprite;
+import br.unicamp.canvasandroidgame.map.MapLayout;
 import br.unicamp.canvasandroidgame.graphics.SpriteSheet;
 
 /**
@@ -47,8 +47,13 @@ public class Player extends Circle {
         velocityY = joystick.getActuatorY() * MAX_SPEED;
 
         // Update position
-        positionX += velocityX;
-        positionY += velocityY;
+        if (!isColliding(positionX+velocityX, positionY)) {
+            positionX += velocityX;
+        }
+
+        if (!isColliding(positionX, positionY+velocityY)) {
+            positionY += velocityY;
+        }
 
         // Update direction
         if (velocityX != 0 || velocityY != 0) {
@@ -94,6 +99,11 @@ public class Player extends Circle {
 
         animator.draw(canvas, gameDisplay, this);
         healthBar.draw(canvas, gameDisplay);
+    }
+
+    public boolean isColliding(double playerPosX, double playerPosY) {
+        return (MapLayout.isWall(MapLayout.convertToMatrixPosX(playerPosX), MapLayout.convertToMatrixPosY(playerPosY)));
+
     }
 
     public int getHealthPoints() {
